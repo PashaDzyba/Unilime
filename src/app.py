@@ -16,9 +16,9 @@ app.config['SQLALCHEMY_DATABASE_URI'] = system_config.database_url
 db = SQLAlchemy(app)
 
 # Cache
-app.config.from_prefixed_env('config.Config')
+app.config['CACHE_TYPE'] = 'simple'
 cache = Cache(app)
-
+cache.init_app(app)
 # Models
 product_review = db.Table('product_review',
                           db.Column('product_id', db.Integer, db.ForeignKey(
@@ -71,7 +71,7 @@ review_schema = ReviewSchema()
 
 
 @app.route("/get_data", methods=["GET"])
-@cache.cached(timeout=300, query_string=True)
+@cache.cached(timeout=5, query_string=True)
 def get_data():
     products = db.session.query(Products).join(product_review).join(Reviews).all()
     result = products_schema.dump(products)
