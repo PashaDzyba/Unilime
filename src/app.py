@@ -73,7 +73,7 @@ review_schema = ReviewSchema()
 @app.route("/get_data", methods=["GET"])
 @cache.cached(timeout=5, query_string=True)
 def get_data():
-    products = db.session.query(Products).join(product_review).join(Reviews).all()
+    products = db.session.query(Products).join(product_review).join(Reviews).paginate(page=1, per_page=3)
     result = products_schema.dump(products)
     return {"result": result}
 
