@@ -80,12 +80,17 @@ def get_data():
 
 @app.route("/updated_data/<int:id>", methods=['PUT'])
 def update_review(id):
-    json_data = request.get_json()
     query = db.session.query(Reviews).join(product_review).join(Products).filter(Products.id == id).first()
-    data = query.update(dict(json_data))
+
+    title = request.json['title']
+    review = request.json['review']
+
+    query.title = title
+    query.review = review
+
     db.session.commit()
-    result = review_schema.dump(data)
-    return jsonify(result)
+
+    return review_schema.jsonify(query)
 
 
 if __name__ == '__main__':
